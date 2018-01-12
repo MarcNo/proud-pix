@@ -1,0 +1,80 @@
+#!/usr/bin/python
+
+import flickr_api as f
+import tweepy as t
+import os
+import pprint
+import sys
+import time
+import argparse
+import ConfigParser
+import pprint
+
+# borrowed from https://wiki.python.org/moin/ConfigParserExamples
+def ConfigSectionMap(section):
+    dict1 = {}
+    options = config.options(section)
+    for option in options:
+        try:
+            dict1[option] = config.get(section, option)
+            if dict1[option] == -1:
+                DebugPrint("skip: %s" % option)
+        except:
+            print("exception on %s!" % option)
+            dict1[option] = None
+    return dict1
+
+
+############################################333
+
+pp = pprint.PrettyPrinter(indent=4)
+
+config = ConfigParser.ConfigParser()
+config.read(os.path.expanduser("~/") + "proud-pix.ini")
+print config.sections()
+
+twitter_consumer_key = ConfigSectionMap("twitter")['consumer_key']
+twitter_consumer_secret = ConfigSectionMap("twitter")['consumer_secret']
+twitter_access_token = ConfigSectionMap("twitter")['access_token']
+twitter_access_secret = ConfigSectionMap("twitter")['access_secret']
+
+flickr_api_key=ConfigSectionMap("flickr")['api_key']
+flickr_api_secret=ConfigSectionMap("flickr")['api_secret']
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--flickr-username", required=True)
+parser.add_argument("--index", "-i", help="Flickr album index; default newest album", default=0)
+parser.add_argument("--dryrun", action='store_true')
+parser.add_argument("--list-albums", default=0, help="Just list last N albums")
+parser.add_argument("--sleep", default=int(120), help="seconds wait between tweets; default 120")
+args = parser.parse_args()
+
+flickr_photoset_idx = int(args.index)
+flickr_username=args.flickr_username
+
+f.set_keys(api_key=flickr_api_key, api_secret=flickr_api_secret)
+
+t_auth = t.OAuthHandler(twitter_consumer_key, twitter_consumer_secret)
+t_auth.set_access_token(twitter_access_token, twitter_access_secret)
+t_api = t.API(t_auth)
+
+f_u = f.Person.findByUserName(flickr_username)
+f_ps = f_u.getPhotosets()[flickr_photoset_idx]
+
+if (int(args.list_albums) > 0): 
+    for i,p in enumerate(f_u.getPhotosets()):
+        print (i,p.title)
+        if (i >= (int(args.list_albums) -1 )):
+            exit()
+
+for pix in f_ps.getPhotos() :
+    if (args.dryrun):
+        pp.pprint(pix)
+        print("(dry run) Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
+    else:
+        print("Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
+        t_api.update_status(pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
+    time.sleep(float(args.sleep))
+
+exit()
+
