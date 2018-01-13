@@ -31,7 +31,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 config = ConfigParser.ConfigParser()
 config.read(os.path.expanduser("~/") + "proud-pix.ini")
-print config.sections()
+# print config.sections()
 
 twitter_consumer_key = ConfigSectionMap("twitter")['consumer_key']
 twitter_consumer_secret = ConfigSectionMap("twitter")['consumer_secret']
@@ -69,7 +69,7 @@ if (int(args.list_albums) > 0):
 
 for pix in f_ps.getPhotos() :
     if (args.dryrun):
-        pp.pprint(pix)
+#        pp.pprint(pix)
         print("(dry run) Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
     else:
         print("Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
