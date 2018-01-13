@@ -74,7 +74,7 @@ for pix in f_ps.getPhotos() :
     else:
         print("Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
         t_api.update_status(pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
-    time.sleep(float(args.sleep))
+        time.sleep(float(args.sleep))
 
 exit()
 
