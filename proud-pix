@@ -75,10 +75,10 @@ if (int(args.list_albums) > 0):
 for pix in f_ps.getPhotos() :
     if (args.dryrun):
 #        pp.pprint(pix)
-        print("(dry run) Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id + extra_string)
+        print("(dry run) Tweeting: " + pix.title + " #flickr" + extra_string + "\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
     else:
-        print("Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id + extra_string)
-        t_api.update_status(pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
+        print("Tweeting: " + pix.title + " #flickr" + extra_string + "\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
+        t_api.update_status(pix.title + " #flickr" + extra_string + "\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
         time.sleep(float(args.sleep))
 
 exit()
