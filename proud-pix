@@ -47,10 +47,15 @@ parser.add_argument("--index", "-i", help="Flickr album index; default newest al
 parser.add_argument("--dryrun", action='store_true')
 parser.add_argument("--list-albums", default=0, help="Just list last N albums")
 parser.add_argument("--sleep", default=int(120), help="seconds wait between tweets; default 120")
+parser.add_argument("--extra-hashtags", help="Extra strings to add to the text, eg: '#foodporn #CreativeCommons'")
 args = parser.parse_args()
 
 flickr_photoset_idx = int(args.index)
 flickr_username=args.flickr_username
+if args.extra_hashtags:
+    extra_string="\n" + args.extra_hashtags
+else:
+    extra_string=""
 
 f.set_keys(api_key=flickr_api_key, api_secret=flickr_api_secret)
 
@@ -70,9 +75,9 @@ if (int(args.list_albums) > 0):
 for pix in f_ps.getPhotos() :
     if (args.dryrun):
 #        pp.pprint(pix)
-        print("(dry run) Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
+        print("(dry run) Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id + extra_string)
     else:
-        print("Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
+        print("Tweeting: " + pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id + extra_string)
         t_api.update_status(pix.title + " #flickr\nhttps://www.flickr.com/photos/" + flickr_username + "/" + pix.id)
         time.sleep(float(args.sleep))
 
